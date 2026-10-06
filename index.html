@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>วิเคราะห์อัลกอริทึมและการแยกย่อยปัญหา - วิทยาการคำนวณ ม.4</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-navy: #1F4E79;
+      --secondary-blue: #2E86AB;
+      --bg-color: #EAF3FA;
+      --btn-orange: #F28C28;
+      --success-green: #2E9E5B;
+      --error-red: #D9534F;
+      --highlight-yellow: #FFE08A;
+      --border-gray: #C9D3DD;
+      --text-dark: #10263F;
+      --white: #FFFFFF;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Sarabun', sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background-color: #0c1c2b;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+
+    /* Screen Wrapper: 16:9 Ratio Aspect (1280x720 Base) */
+    #app-container {
+      width: 100vw;
+      max-width: 1280px;
+      height: 56.25vw;
+      max-height: 720px;
+      background-color: var(--bg-color);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Bar A (80px) */
+    header.top-bar {
+      height: 80px;
+      background-color: var(--primary-navy);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 30px;
+      color: var(--white);
+      z-index: 10;
+    }
+
+    .top-left {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo-badge {
+      background: var(--white);
+      color: var(--primary-navy);
+      font-weight: 700;
+      font-size: 16px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+    }
+
+    .lesson-title-header {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--white);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: scale(1.05);
+    }
+
+    /* Content Area B (560px) */
+    main.content-area {
+      flex: 1;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .frame-card {
+      width: 100%;
+      height: 100%;
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(31, 78, 121, 0.08);
+      padding: 25px 35px;
+      display: none;
+      flex-direction: column;
+      animation: fadeIn 0.5s ease forwards;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .frame-card.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Bottom Bar C (80px) */
+    footer.bottom-bar {
+      height: 80px;
+      background: var(--white);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      z-index: 10;
+    }
+
+    .nav-btn {
+      padding: 10px 24px;
+      border-radius: 14px;
+      font-size: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .nav-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+    }
+
+    .btn-next {
+      background-color: var(--btn-orange);
+      color: #10263f;
+    }
+
+    .btn-prev {
+      background-color: transparent;
+      color: var(--primary-navy);
+      border: 2px solid var(--primary-navy);
+    }
+
+    .nav-btn:disabled {
+      background-color: var(--border-gray) !important;
+      color: #7b8895 !important;
+      border-color: transparent !important;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    /* Frame Dots Indicator */
+    .stepper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 6px;
+      background: #CCD8E4;
+      transition: all 0.3s;
+    }
+
+    .step-dot.active {
+      width: 28px;
+      background: var(--primary-navy);
+    }
+
+    .step-dot.completed {
+      background: var(--success-green);
+    }
+
+    .frame-label {
+      margin-left: 10px;
+      font-weight: 600;
+      color: #647b93;
+      font-size: 16px;
+    }
+
+    /* ================= FRAME SPECIFIC STYLES ================= */
+    /* Frame 1: Title Screen */
+    #frame-1 {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, #1F4E79 0%, #2E86AB 100%);
+      color: var(--white);
+      border-radius: 0;
+      padding: 60px 80px;
+      display: none;
+      z-index: 20;
+    }
+
+    #frame-1.active { display: flex; }
+
+    .f1-layout {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .f1-text {
+      max-width: 60%;
+    }
+
+    .f1-badge {
+      font-size: 20px;
+      color: #C0DCF5;
+      margin-bottom: 12px;
+    }
+
+    .f1-title {
+      font-size: 52px;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 15px;
+    }
+
+    .f1-sub {
+      font-size: 26px;
+      color: #e2effa;
+      margin-bottom: 22px;
+    }
+
+    .student-form {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .student-form input {
+      font-family: inherit;
+      font-size: 18px;
+      padding: 10px 14px;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      outline: none;
+      color: #10263f;
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .student-form input:focus { border-color: var(--btn-orange); }
+    .student-form input.invalid { border-color: #e5484d; }
+    #stu-name { width: 300px; }
+    #stu-no { width: 110px; }
+
+    .btn-start {
+      background: var(--btn-orange);
+      color: #10263f;
+      font-size: 26px;
+      font-weight: 700;
+      padding: 14px 40px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(242, 140, 40, 0.4);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); box-shadow: 0 10px 25px rgba(242, 140, 40, 0.6); }
+      100% { transform: scale(1); }
+    }
+
+    .f1-anim {
+      width: 320px;
+      animation: floatY 3s ease-in-out infinite;
+    }
+
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    /* Frame 2: Objectives & Scenario */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      height: 100%;
+    }
+
+    .sub-card {
+      border: 1px solid #D5E3EF;
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      background: #FAFDFE;
+    }
+
+    .scenario-box {
+      background: var(--highlight-yellow);
+      border-radius: 14px;
+      padding: 16px 20px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #553e00;
+      margin-top: 15px;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .obj-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      opacity: 0;
+      transform: translateX(20px);
+      transition: all 0.5s ease;
+    }
+
+    .obj-item.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .obj-badge {
+      background: var(--secondary-blue);
+      color: var(--white);
+      width: 28px;
+      height: 28px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Frame 3 & 9: Quiz */
+    .quiz-container {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      justify-content: space-between;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #DCE7F0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--success-green);
+      width: 10%;
+      transition: width 0.3s;
+    }
+
+    .question-box {
+      background: #F4F8FC;
+      border-left: 6px solid var(--primary-navy);
+      padding: 18px 24px;
+      border-radius: 12px;
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 2px solid var(--border-gray);
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 20px;
+      background: var(--white);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-item:hover {
+      border-color: var(--secondary-blue);
+      transform: scale(1.01);
+    }
+
+    .option-item.selected {
+      background: var(--highlight-yellow);
+      border-color: var(--btn-orange);
+      font-weight: 600;
+    }
+
+    .opt-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      background: var(--primary-navy);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* Frame 4: Main Menu */
+    .menu-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      margin: 25px 0;
+    }
+
+    .unit-card {
+      border: 2px solid #D5E3EF;
+      border-radius: 18px;
+      padding: 20px;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .unit-card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    .unit-card.completed {
+      border-color: var(--success-green);
+    }
+
+    .status-tag {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .tag-todo {
+      background: #E7ECF1;
+      color: #607283;
+    }
+
+    .tag-done {
+      background: #DFF3E3;
+      color: var(--success-green);
+    }
+
+    .unit-icon {
+      font-size: 48px;
+      margin: 15px 0 10px 0;
+    }
+
+    .unit-number {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      width: 28px;
+      height: 28px;
+      border-radius: 14px;
+      background: var(--primary-navy);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .bottom-menu-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 15px;
+      border-top: 1px solid #e1ebf4;
+    }
+
+    .btn-minigame-lock {
+      padding: 12px 28px;
+      border-radius: 14px;
+      font-size: 20px;
+      font-weight: 600;
+      border: none;
+      background: var(--border-gray);
+      color: #6B7785;
+      cursor: not-allowed;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+
+    .btn-minigame-lock.unlocked {
+      background: var(--btn-orange);
+      color: #10263f;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(242, 140, 40, 0.4);
+    }
+
+    /* Frame 5,6,7: Units (Video & Layout) */
+    .unit-layout {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 25px;
+      height: 100%;
+    }
+
+    .vdo-embed h3 {
+      font-size: 20px;
+      color: var(--primary-navy);
+      margin-bottom: 10px;
+    }
+
+    .vdo-frame {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 14px;
+      overflow: hidden;
+      background: #000;
+      box-shadow: 0 6px 18px rgba(31, 78, 121, 0.18);
+    }
+
+    .vdo-frame iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .summary-card {
+      border: 1px solid #D5E3EF;
+      border-radius: 16px;
+      padding: 20px;
+      background: #FAFDFE;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .practice-callout {
+      margin-top: 15px;
+      background: #FFF6E3;
+      border: 2px solid var(--btn-orange);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Frame 8: Matching Game */
+    .matching-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 15px;
+    }
+
+    .match-card {
+      background: #F8FAFC;
+      border: 2px solid var(--border-gray);
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 12px;
+      font-size: 17px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .match-card.active-select {
+      border-color: var(--secondary-blue);
+      background: #EAF4FA;
+    }
+
+    .match-card.matched {
+      border-color: var(--success-green);
+      background: #EDF9F1;
+      color: #176637;
+      cursor: default;
+    }
+
+    /* Modal / Popups */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(16, 38, 63, 0.65);
+      backdrop-filter: blur(3px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-card {
+      background: var(--white);
+      border-radius: 24px;
+      width: 90%;
+      max-width: 600px;
+      padding: 35px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+      text-align: center;
+      animation: popUp 0.35s ease;
+    }
+
+    @keyframes popUp {
+      from { transform: translateY(40px) scale(0.95); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    /* Frame 11: Feedback page */
+    .fb-page {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .fb-icon {
+      width: 90px; height: 90px; border-radius: 45px;
+      background: #E3F1FB; font-size: 46px;
+      display: inline-flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .btn-form-link {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--btn-orange); color: #10263f;
+      font-size: 26px; font-weight: 700; text-decoration: none;
+      padding: 14px 40px; border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(242, 140, 40, 0.4);
+      transition: transform 0.2s;
+    }
+
+    .btn-form-link:hover { transform: scale(1.05); }
+
+    /* Frame 10: Summary & Reflection */
+    .f10-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr;
+      gap: 30px;
+      height: 100%;
+    }
+
+    .score-circle-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      border: 1px solid #D5E3EF;
+      border-radius: 20px;
+      background: #FAFDFE;
+    }
+
+    .circular-progress {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: conic-gradient(var(--success-green) 288deg, #E1E8EF 0deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .inner-circle {
+      width: 110px;
+      height: 110px;
+      background: var(--white);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reflection-box {
+      border: 1px solid #D5E3EF;
+      border-radius: 20px;
+      padding: 24px;
+      background: #FAFDFE;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .reflection-textarea {
+      width: 100%;
+      height: 120px;
+      border: 2px dashed #9DB4CA;
+      background: #F7FAFD;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 16px;
+      resize: none;
+      outline: none;
+    }
+
+    .reflection-textarea:focus {
+      border-color: var(--secondary-blue);
+      background: var(--white);
+    }
+
+    /* Interactive Shape Icons */
+    .shape-svg {
+      width: 100px;
+      height: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app-container">
+    
+    <!-- FRAME 1: Title Screen (Overlay Fullscreen inside Container) -->
+    <div id="frame-1" class="frame-card active">
+      <div class="f1-layout">
+        <div class="f1-text">
+          <div class="f1-badge">สื่อบทเรียนดิจิทัลมัลติมีเดียแบบมีปฏิสัมพันธ์</div>
+          <h1 class="f1-title">วิเคราะห์อัลกอริทึม<br>และการแยกย่อยปัญหา</h1>
+          <div class="f1-sub">วิชาวิทยาการคำนวณ ชั้นมัธยมศึกษาปีที่ 4</div>
+          <div class="student-form">
+            <input type="text" id="stu-name" placeholder="ชื่อ-นามสกุล" autocomplete="off">
+            <input type="text" id="stu-no" placeholder="เลขที่" inputmode="numeric" autocomplete="off">
+          </div>
+          <button class="btn-start" onclick="startCourse()">เริ่มเรียน ➜</button>
+          <div style="margin-top: 40px; font-size: 16px; color: #a5c7e8;">
+            สื่อการเรียนรู้ตามหลักสูตรแกนกลาง สสวท. | ADDIE Model Instructional Media
+          </div>
+        </div>
+        <div class="f1-anim">
+          <svg viewBox="0 0 200 280" width="100%">
+            <!-- Flowchart Animation Graphic -->
+            <rect x="30" y="10" width="140" height="45" rx="22" fill="#FFFFFF"/>
+            <text x="100" y="38" text-anchor="middle" fill="#1F4E79" font-weight="bold" font-size="16">เริ่มต้น</text>
+            <line x1="100" y1="55" x2="100" y2="80" stroke="#FFFFFF" stroke-width="4"/>
+            
+            <rect x="20" y="80" width="160" height="50" rx="6" fill="#FFE08A"/>
+            <text x="100" y="112" text-anchor="middle" fill="#10263F" font-weight="bold" font-size="16">แยกย่อยปัญหา</text>
+            <line x1="100" y1="130" x2="100" y2="155" stroke="#FFFFFF" stroke-width="4"/>
+            
+            <polygon points="100,155 170,185 100,215 30,185" fill="#FFFFFF"/>
+            <text x="100" y="191" text-anchor="middle" fill="#1F4E79" font-weight="bold" font-size="15">ผ่านเกณฑ์ ?</text>
+            
+            <line x1="100" y1="215" x2="100" y2="245" stroke="#FFFFFF" stroke-width="4"/>
+            <rect x="40" y="245" width="120" height="35" rx="6" fill="#2E9E5B"/>
+            <text x="100" y="268" text-anchor="middle" fill="#FFFFFF" font-weight="bold" font-size="14">สำเร็จ (จบ)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- STANDARD A: Top Header Bar -->
+    <header class="top-bar">
+      <div class="top-left">
+        <span class="logo-badge">LOGO</span>
+        <div class="lesson-title-header" id="header-title">วิเคราะห์อัลกอริทึมและการแยกย่อยปัญหา</div>
+      </div>
+      <div class="top-right">
+        <button class="icon-btn" onclick="toggleAudio()" title="เปิด/ปิดเสียง">
+          <span id="audio-icon">🔊</span>
+        </button>
+        <button class="icon-btn" onclick="goToMenu()" title="กลับหน้าเมนูหลัก">
+          🏠
+        </button>
+      </div>
+    </header>
+
+    <!-- STANDARD B: Main Contents Area -->
+    <main class="content-area">
+
+      <!-- FRAME 2: Objectives & Scenario -->
+      <div id="frame-2" class="frame-card">
+        <h2 style="font-size: 26px; color: var(--primary-navy); margin-bottom: 15px;">แนะนำวัตถุประสงค์และสถานการณ์จำลอง</h2>
+        <div class="grid-2col">
+          <div class="sub-card">
+            <h3 style="font-size: 22px; color: var(--secondary-blue); margin-bottom: 10px;">🍔 สถานการณ์จำลอง</h3>
+            <div style="text-align: center; margin: 10px 0;">
+              <span style="font-size: 55px;">🥪🍳🔥</span>
+            </div>
+            <div class="scenario-box">
+              "ถ้าต้องสั่งหุ่นยนต์ให้ทำแซนด์วิชทอด จะสั่งอย่างไรให้ไม่พลาดสักขั้นตอน?"
+            </div>
+            <p style="margin-top: 15px; font-size: 16px; color: #58697a; text-align: center;">
+              ลองนึกขั้นตอนในใจ 10 วินาที แล้วมาดูวัตถุประสงค์ที่จะได้เรียนรู้กัน
+            </p>
+          </div>
+
+          <div class="sub-card">
+            <h3 style="font-size: 22px; color: var(--primary-navy); margin-bottom: 15px;">🎯 วัตถุประสงค์การเรียนรู้</h3>
+            <div class="obj-item" id="obj-1">
+              <div class="obj-badge">1</div>
+              <div style="font-size: 18px;">อธิบายความหมายของขั้นตอนวิธีและการแยกส่วนประกอบของปัญหาได้</div>
+            </div>
+            <div class="obj-item" id="obj-2">
+              <div class="obj-badge">2</div>
+              <div style="font-size: 18px;">จำแนกหน้าที่ของสัญลักษณ์ผังงานมาตรฐาน 5 สัญลักษณ์ได้ถูกต้อง</div>
+            </div>
+            <div class="obj-item" id="obj-3">
+              <div class="obj-badge">3</div>
+              <div style="font-size: 18px;">เขียนรหัสลำลองและผังงานเพื่อแก้ปัญหาอย่างเป็นขั้นตอน</div>
+            </div>
+            <div class="obj-item" id="obj-4">
+              <div class="obj-badge">4</div>
+              <div style="font-size: 18px;">มีวินัย ตั้งใจ และให้ความร่วมมือในการปฏิบัติงาน</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRAME 3: Pre-test -->
+      <div id="frame-3" class="frame-card">
+        <div class="quiz-container">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 20px; font-weight:700; color:var(--primary-navy);" id="pre-q-num">แบบทดสอบก่อนเรียน ข้อ 1/10</span>
+              <span style="color:#6e8294; font-size:16px;">(ไม่นับคะแนนประเมินผ่าน)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="pre-progress"></div>
+            </div>
+            <div class="question-box" id="pre-question-text">คำถามกำลังโหลด...</div>
+            <div class="options-grid" id="pre-options"></div>
+          </div>
+          <div style="text-align: right; margin-top: 15px;">
+            <button class="nav-btn btn-next" id="pre-next-btn" onclick="nextPreQuestion()" disabled>ข้อถัดไป ➔</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRAME 4: Main Menu -->
+      <div id="frame-4" class="frame-card">
+        <h2 style="font-size: 26px; color: var(--primary-navy);">เลือกหน่วยการเรียนรู้ (เรียนหน่วยใดก่อนก็ได้)</h2>
+        <p style="color: #647b93; font-size: 18px; margin-top: 4px;">ศึกษาเนื้อหาและทำกิจกรรมให้ครบทั้ง 3 หน่วย เพื่อปลดล็อกมินิเกม</p>
+        
+        <div class="menu-cards">
+          <!-- Unit 1 -->
+          <div class="unit-card" id="card-u1" onclick="openUnit(5)">
+            <div class="unit-number">1</div>
+            <span class="status-tag tag-todo" id="tag-u1">ยังไม่เรียน</span>
+            <div class="unit-icon">🧩</div>
+            <h3 style="font-size: 22px; color: var(--primary-navy);">Decomposition</h3>
+            <p style="color:#647b93; margin-top:6px; font-size:16px;">แยกส่วนประกอบและย่อยปัญหา</p>
+          </div>
+          <!-- Unit 2 -->
+          <div class="unit-card" id="card-u2" onclick="openUnit(6)">
+            <div class="unit-number">2</div>
+            <span class="status-tag tag-todo" id="tag-u2">ยังไม่เรียน</span>
+            <div class="unit-icon">🔍</div>
+            <h3 style="font-size: 22px; color: var(--primary-navy);">Pattern & Abstraction</h3>
+            <p style="color:#647b93; margin-top:6px; font-size:16px;">หารูปแบบและคิดเชิงนามธรรม</p>
+          </div>
+          <!-- Unit 3 -->
+          <div class="unit-card" id="card-u3" onclick="openUnit(7)">
+            <div class="unit-number">3</div>
+            <span class="status-tag tag-todo" id="tag-u3">ยังไม่เรียน</span>
+            <div class="unit-icon">📊</div>
+            <h3 style="font-size: 22px; color: var(--primary-navy);">Algorithm & Flowchart</h3>
+            <p style="color:#647b93; margin-top:6px; font-size:16px;">ขั้นตอนวิธีและการเขียนผังงาน</p>
+          </div>
+        </div>
+
+        <div class="bottom-menu-bar">
+          <div>
+            <span style="font-weight: 700; font-size: 18px; color: var(--primary-navy);" id="menu-progress-label">ศึกษาแล้ว 0/3 หน่วย</span>
+            <div class="progress-bar-bg" style="width: 280px; height: 8px; margin: 6px 0 0 0;">
+              <div class="progress-bar-fill" id="menu-bar-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+          <button class="btn-minigame-lock" id="btn-to-f8" onclick="goToGame()" disabled>
+            <span>🔒</span> มินิเกมและใบงานกลุ่ม (ปลดล็อกเมื่อครบ 3 หน่วย)
+          </button>
+        </div>
+      </div>
+
+      <!-- FRAME 5: Unit 1 -->
+      <div id="frame-5" class="frame-card">
+        <div class="unit-layout">
+          <div class="vdo-embed">
+            <h3>คลิปที่ 1: การแยกส่วนประกอบ (Decomposition)</h3>
+            <div class="vdo-frame">
+              <iframe src="https://www.youtube.com/embed/gBi0t14EUkg?rel=0" title="คลิปที่ 1: การแยกส่วนประกอบ (Decomposition)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="summary-card">
+              <h4 style="color:var(--primary-navy); margin-bottom:8px; font-size:20px;">📌 สรุปสาระสำคัญ</h4>
+              <ul style="padding-left:20px; font-size:16px; color:#33485d; line-height: 1.7;">
+                <li><b>Decomposition:</b> การแตกปัญหาหรือสิ่งของที่ซับซ้อนออกเป็นส่วนย่อย ๆ ให้จัดการง่าย</li>
+                <li><b>สมาร์ตโฟน:</b> จอสัมผัส แบตเตอรี่ กล้อง เมนบอร์ด ชิป</li>
+                <li><b>แซนด์วิชทอด:</b> เตรียมของ ➔ ประกอบ ➔ ทอด ➔ จัดเสิร์ฟ</li>
+              </ul>
+            </div>
+            <div class="practice-callout">
+              <b>💡 ลองทำ: กิจกรรมแยกชิ้นส่วนสมาร์ตโฟน</b>
+              <button class="nav-btn btn-next" style="min-width:auto; padding:8px 16px; font-size:16px;" onclick="openActivity(1)">เริ่มกิจกรรมย่อย ➔</button>
+            </div>
+            <button class="nav-btn btn-next" style="margin-top:10px; width:100%;" id="btn-finish-u1" onclick="finishUnit(1)">✓ เรียนจบหน่วยนี้ (กลับเมนู)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRAME 6: Unit 2 -->
+      <div id="frame-6" class="frame-card">
+        <div class="unit-layout">
+          <div class="vdo-embed">
+            <h3>คลิปที่ 2: การหารูปแบบและคิดเชิงนามธรรม (Pattern & Abstraction)</h3>
+            <div class="vdo-frame">
+              <iframe src="https://www.youtube.com/embed/Hb8DcPRnQwQ?rel=0" title="คลิปที่ 2: การหารูปแบบและคิดเชิงนามธรรม (Pattern & Abstraction)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="summary-card">
+              <h4 style="color:var(--primary-navy); margin-bottom:8px; font-size:20px;">📌 สรุปสาระสำคัญ</h4>
+              <ul style="padding-left:20px; font-size:16px; color:#33485d; line-height: 1.7;">
+                <li><b>Pattern Recognition:</b> มองหาความเหมือน เพื่อนำวิธีการแก้ปัญหาเดิมมาใช้ซ้ำ</li>
+                <li><b>ตัวอย่าง:</b> การจัดกลุ่มยานพาหนะตามล้อ/การใช้งาน, การจำแนกพืชใบเลี้ยงเดี่ยว/คู่</li>
+                <li><b>Abstraction:</b> เก็บเฉพาะสาระสำคัญ ตัดสิ่งที่ไม่เกี่ยวข้องออก เพื่อสร้างแบบจำลอง (Model)</li>
+              </ul>
+            </div>
+            <div class="practice-callout">
+              <b>💡 ลองทำ: กิจกรรมจัดกลุ่มยานพาหนะ</b>
+              <button class="nav-btn btn-next" style="min-width:auto; padding:8px 16px; font-size:16px;" onclick="openActivity(2)">เริ่มกิจกรรมย่อย ➔</button>
+            </div>
+            <button class="nav-btn btn-next" style="margin-top:10px; width:100%;" id="btn-finish-u2" onclick="finishUnit(2)">✓ เรียนจบหน่วยนี้ (กลับเมนู)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRAME 7: Unit 3 -->
+      <div id="frame-7" class="frame-card">
+        <div class="unit-layout">
+          <div class="vdo-embed">
+            <h3>คลิปที่ 3: ขั้นตอนวิธีและผังงาน (Algorithm & Flowchart)</h3>
+            <div class="vdo-frame">
+              <iframe src="https://www.youtube.com/embed/ThpK8B9Xjsg?rel=0" title="คลิปที่ 3: ขั้นตอนวิธีและผังงาน (Algorithm & Flowchart)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; justify-content:space-between;">
+            <div class="summary-card">
+              <h4 style="color:var(--primary-navy); margin-bottom:8px; font-size:20px;">📌 สรุปสาระสำคัญ</h4>
+              <p style="font-size:15px; margin-bottom:8px;"><b>Algorithm:</b> ลำดับคำสั่งที่ชัดเจนประกอบด้วย ข้อมูลเข้า ➔ ประมวลผล ➔ แสดงผล</p>
+              <div style="background:#edf5fb; border-radius:10px; padding:10px; font-size:14px; text-align:center;">
+                <b>ตัวอย่างผังงานระบบรดน้ำต้นไม้:</b><br>
+                [เริ่มต้น] ➔ [รับค่าความชื้น H] ➔ {H &lt; 40 ?} ➔ <br>
+                (ใช่: เปิดน้ำ / ไม่ใช่: ปิดน้ำ) ➔ [สิ้นสุด]
+              </div>
+            </div>
+            <div class="practice-callout">
+              <b>💡 ลองทำ: กิจกรรมต่อบล็อกผังงานรดน้ำ</b>
+              <button class="nav-btn btn-next" style="min-width:auto; padding:8px 16px; font-size:16px;" onclick="openActivity(3)">เริ่มกิจกรรมย่อย ➔</button>
+            </div>
+            <button class="nav-btn btn-next" style="margin-top:10px; width:100%;" id="btn-finish-u3" onclick="finishUnit(3)">✓ เรียนจบหน่วยนี้ (กลับเมนู)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRAME 8: Mini-Game & Worksheet -->
+      <div id="frame-8" class="frame-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h2 style="font-size:24px; color:var(--primary-navy);">มินิเกม: ลากจับคู่หน้าที่กับสัญลักษณ์ผังงาน</h2>
+            <p style="color:#647b93; font-size:16px;">คลิกเลือกกล่องหน้าที่ทางซ้าย แล้วคลิกเลือกสัญลักษณ์ที่สัมพันธ์กันทางขวา</p>
+          </div>
+          <div style="background:var(--primary-navy); color:var(--white); padding:8px 18px; border-radius:14px; font-size:20px; font-weight:700;">
+            จับคู่ถูกต้อง: <span id="game-score">0</span>/5
+          </div>
+        </div>
+
+        <div class="matching-cols">
+          <div id="col-left">
+            <div class="match-card" data-id="1" onclick="selectMatchLeft(this)">1. Terminal (จุดเริ่มต้น / จุดสิ้นสุด)</div>
+            <div class="match-card" data-id="2" onclick="selectMatchLeft(this)">2. Process (การประมวลผล / คำนวณ)</div>
+            <div class="match-card" data-id="3" onclick="selectMatchLeft(this)">3. Decision (ตรวจสอบเงื่อนไข / ตัดสินใจ)</div>
+            <div class="match-card" data-id="4" onclick="selectMatchLeft(this)">4. Data (Input/Output ข้อมูลทั่วไป)</div>
+            <div class="match-card" data-id="5" onclick="selectMatchLeft(this)">5. Flowline (ลูกศรแสดงทิศทางการทำงาน)</div>
+          </div>
+          <div id="col-right">
+            <div class="match-card" data-match="3" onclick="selectMatchRight(this)">สี่เหลี่ยมขนมเปียกปูน (Decision)</div>
+            <div class="match-card" data-match="1" onclick="selectMatchRight(this)">สี่เหลี่ยมผืนผ้าขอบมน / วงรี (Terminal)</div>
+            <div class="match-card" data-match="5" onclick="selectMatchRight(this)">ลูกศรบอกทิศทาง (Flowline)</div>
+            <div class="match-card" data-match="2" onclick="selectMatchRight(this)">สี่เหลี่ยมผืนผ้า (Process)</div>
+            <div class="match-card" data-match="4" onclick="selectMatchRight(this)">สี่เหลี่ยมด้านขนาน (Data In/Out)</div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto; padding-top:15px; border-top:1px solid #dce7f0;">
+          <a class="nav-btn btn-prev" style="text-decoration:none;" href="worksheet_sandwich_algorithm.pdf" download="ใบงานกลุ่ม_แซนด์วิชทอด.pdf" onclick="playClick()">📥 ดาวน์โหลดใบงานกลุ่ม: แซนด์วิชทอด</a>
+          <button class="nav-btn btn-next" id="btn-to-posttest" onclick="goToPostTest()" disabled>ไปประเมินความพึงพอใจ 🔒</button>
+        </div>
+      </div>
+
+      <!-- FRAME 9: Feedback (Google Form) -->
+      <div id="frame-9" class="frame-card fb-page">
+        <div class="fb-icon">📝</div>
+        <h2 style="font-size: 30px; color: var(--primary-navy); margin-bottom: 10px;">ประเมินความพึงพอใจต่อบทเรียน</h2>
+        <p style="font-size: 18px; color: #4a5f73; line-height: 1.7; max-width: 560px; margin-bottom: 26px;">
+          เรียนมาถึงช่วงท้ายของบทเรียนแล้ว<br>
+          ช่วยตอบแบบประเมินสั้นๆ เพื่อบอกเราว่าบทเรียนนี้เป็นอย่างไร<br>
+          ความเห็นของเธอจะช่วยให้เราปรับปรุงสื่อให้ดียิ่งขึ้น
+        </p>
+        <a class="btn-form-link" href="https://docs.google.com/forms/d/e/1FAIpQLSfBxPT4vgRPajxwap6m8OIRVjEa3ecMNnMprCI6g_a7EmeH8A/viewform" target="_blank" rel="noopener" onclick="playDing()">
+          <span>📋</span> เปิดแบบประเมิน (Google Form) ➜
+        </a>
+        <p style="font-size: 14px; color: #7b8895; margin-top: 14px;">ลิงก์จะเปิดในแท็บใหม่ ใช้เวลาประมาณ 2-3 นาที ตอบเสร็จแล้วกลับมาที่หน้านี้เพื่อทำแบบทดสอบต่อ</p>
+        <button class="nav-btn btn-next" style="margin-top: 22px;" onclick="goToFrame(10)">ไปทำแบบทดสอบหลังเรียน ➔</button>
+      </div>
+
+      <!-- FRAME 10: Post-test -->
+      <div id="frame-10" class="frame-card">
+        <div class="quiz-container">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size: 20px; font-weight:700; color:var(--primary-navy);" id="post-q-num">แบบทดสอบหลังเรียน ข้อ 1/10</span>
+              <span style="color:var(--error-red); font-weight:600; font-size:16px;">เกณฑ์ผ่านร้อยละ 70 (7/10 ข้อ)</span>
+            </div>
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="post-progress"></div>
+            </div>
+            <div class="question-box" id="post-question-text">คำถามกำลังโหลด...</div>
+            <div class="options-grid" id="post-options"></div>
+          </div>
+          <div style="text-align: right; margin-top: 15px;">
+            <button class="nav-btn btn-next" id="post-next-btn" onclick="nextPostQuestion()" disabled>ข้อถัดไป ➔</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FRAME 11: Summary & Reflection -->
+      <div id="frame-11" class="frame-card">
+        <h2 style="font-size: 24px; color: var(--primary-navy); margin-bottom: 15px;">สรุปผลคะแนนและการสะท้อนคิด (Reflection)</h2>
+        <div class="f10-grid">
+          
+          <div class="score-circle-wrap">
+            <h3 style="color:var(--primary-navy); margin-bottom:12px;">ผลการทดสอบหลังเรียน</h3>
+            <div class="circular-progress" id="score-circle">
+              <div class="inner-circle">
+                <span style="font-size: 32px; font-weight:700; color:var(--primary-navy);" id="final-score-val">0/10</span>
+                <span style="font-size: 14px; color:#5c7389;" id="final-pct-val">ร้อยละ 0</span>
+              </div>
+            </div>
+            <div style="background:#DFF3E3; color:var(--success-green); padding:6px 16px; border-radius:16px; font-weight:700; margin-bottom:15px;">
+              ✓ ผ่านเกณฑ์การประเมิน
+            </div>
+            <div style="width:100%; font-size:15px; color:#4a5f73;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                <span>ก่อนเรียน:</span>
+                <b id="summary-pre-score">0 / 10</b>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>หลังเรียน:</span>
+                <b style="color:var(--success-green);" id="summary-post-score">0 / 10</b>
+              </div>
+            </div>
+          </div>
+
+          <div class="reflection-box">
+            <div>
+              <h3 style="color:var(--primary-navy); margin-bottom:8px;">บันทึกสะท้อนคิด (Reflection Journal)</h3>
+              <p style="font-size:14px; color:#58697a; margin-bottom:10px;">
+                1) ได้เรียนรู้อะไรเกี่ยวกับขั้นตอนวิธีและผังงาน? <br>
+                2) จุดใดที่ยังอยากฝึกเพิ่มเติม? <br>
+                3) จะนำไปปรับใช้กับการแก้ปัญหาอย่างไร?
+              </p>
+              <textarea class="reflection-textarea" id="reflection-text" placeholder="พิมพ์ข้อความสะท้อนคิดที่นี่..."></textarea>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+              <button class="nav-btn btn-next" style="flex:1;" onclick="submitReflection()">ส่งคะแนนและบันทึกสะท้อนคิด</button>
+              <button class="nav-btn btn-prev" style="min-width:auto;" onclick="finishAll()">จบการเรียน 🏁</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+    <!-- STANDARD C: Bottom Navigation Bar -->
+    <footer class="bottom-bar" id="standard-footer">
+      <button class="nav-btn btn-prev" id="btn-back" onclick="navigateStep(-1)">❮ ย้อนกลับ</button>
+      
+      <div class="stepper">
+        <div class="step-dot" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+        <div class="step-dot" id="dot-4"></div>
+        <div class="step-dot" id="dot-5"></div>
+        <div class="step-dot" id="dot-6"></div>
+        <div class="step-dot" id="dot-7"></div>
+        <div class="step-dot" id="dot-8"></div>
+        <div class="step-dot" id="dot-9"></div>
+        <div class="step-dot" id="dot-10"></div>
+        <div class="step-dot" id="dot-11"></div>
+        <span class="frame-label" id="frame-stepper-label">เฟรม 2/11</span>
+      </div>
+
+      <button class="nav-btn btn-next" id="btn-forward" onclick="navigateStep(1)">ถัดไป ❯</button>
+    </footer>
+
+    <!-- POPUP MODAL 9.1: Retry Notice -->
+    <div class="modal-overlay" id="modal-retry">
+      <div class="modal-card">
+        <div style="width:70px; height:70px; background:#fde8e8; border-radius:35px; display:inline-flex; align-items:center; justify-content:center; color:var(--error-red); font-size:36px; margin-bottom:15px;">✖</div>
+        <h2 style="color:var(--error-red); font-size:28px; margin-bottom:10px;">ยังไม่ผ่านเกณฑ์</h2>
+        <div style="font-size:42px; font-weight:700; color:var(--primary-navy);" id="retry-score-text">5 / 10</div>
+        <p style="color:#576b7d; font-size:18px; margin: 10px 0;">(เกณฑ์ผ่านคือร้อยละ 70 ขึ้นไป หรือ 7 ข้อขึ้นไป)</p>
+        <div style="background:var(--highlight-yellow); border-radius:12px; padding:15px; font-weight:600; font-size:16px; margin:20px 0; color:#4e3900;">
+          ไม่เป็นไรนะ ลองกลับไปทบทวนคลิปในหน่วยที่ยังไม่มั่นใจ แล้วกลับมาทำแบบทดสอบอีกครั้ง!
+        </div>
+        <button class="nav-btn btn-next" style="width:100%;" onclick="closeRetryAndGoMenu()">ทบทวนบทเรียน (กลับเมนูหลัก)</button>
+      </div>
+    </div>
+
+    <!-- POPUP MODALS FOR MINI ACTIVITIES (Units 1, 2, 3) -->
+    <div class="modal-overlay" id="modal-activity">
+      <div class="modal-card" style="max-width:680px; text-align:left;">
+        <h3 id="modal-act-title" style="color:var(--primary-navy); margin-bottom:15px;">กิจกรรมย่อย</h3>
+        <div id="modal-act-content"></div>
+        <div style="text-align:right; margin-top:20px;">
+          <button class="nav-btn btn-next" onclick="closeActivity()">เข้าใจแล้ว / ปิดหน้าต่าง</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    /* ================= APP STATE MANAGEMENT ================= */
+    let currentFrame = 1;
+    let completedUnits = { 1: false, 2: false, 3: false };
+    let soundEnabled = true;
+    let preScore = 0;
+    let postScore = 0;
+        let student = { name: '', no: '' };
+
+    /* ================= SEND SCORES TO GOOGLE SHEETS (open in Excel) ================= */
+    // วาง URL ของ Google Apps Script Web App ตรงนี้ (ลงท้ายด้วย /exec)
+    const SCORE_ENDPOINT = "https://script.google.com/macros/s/AKfycbxMnAzmd543qowDs-mqlvTK-G9xdsesb_J2_Y_cw3SEYXIxYw4kEHDgHsXYfsqI32gEFw/exec";
+
+    function sendScore(eventName, extra = {}) {
+      if (!SCORE_ENDPOINT) { console.warn('SCORE_ENDPOINT ยังไม่ได้ตั้งค่า - ไม่ได้ส่งคะแนน'); return; }
+      const payload = Object.assign({
+        event: eventName,            // 'ก่อน' | 'หลัง' | 'สะท้อนคิด'
+        name: student.name,
+        no: student.no,
+        score: eventName === 'ก่อน' ? preScore : postScore
+      }, extra);
+      try {
+        fetch(SCORE_ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        }).catch(err => console.warn('ส่งคะแนนไม่สำเร็จ', err));
+      } catch (err) { console.warn('ส่งคะแนนไม่สำเร็จ', err); }
+    }
+
+    /* Sound Synthesizer via Web Audio API (No External Audio Asset Required) */
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(freq = 440, type = 'sine', duration = 0.15) {
+      if (!soundEnabled) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn("Audio Context blocked until interaction", e);
+      }
+    }
+
+    function playDing() { playBeep(587.33, 'triangle', 0.2); setTimeout(() => playBeep(880, 'triangle', 0.3), 100); }
+    function playBuzz() { playBeep(180, 'sawtooth', 0.3); }
+    function playClick() { playBeep(700, 'sine', 0.05); }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('audio-icon').textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
+    /* ================= NAVIGATION CONTROLLER ================= */
+    function goToFrame(frameNum) {
+      // Validate bounds
+      if (frameNum < 1 || frameNum > 11) return;
+      
+      // Update UI active card
+      document.querySelectorAll('.frame-card').forEach(f => f.classList.remove('active'));
+      const target = document.getElementById(`frame-${frameNum}`);
+      if (target) target.classList.add('active');
+      currentFrame = frameNum;
+
+      // Header and Footer Visibility
+      const footer = document.getElementById('standard-footer');
+      const headerTitle = document.getElementById('header-title');
+
+      if (frameNum === 1) {
+        footer.style.display = 'none';
+        headerTitle.textContent = "วิเคราะห์อัลกอริทึมและการแยกย่อยปัญหา";
+      } else {
+        footer.style.display = 'flex';
+        updateStepper(frameNum);
+        
+        // Frame title mappings
+        const titles = {
+          2: "แนะนำวัตถุประสงค์และสถานการณ์จำลอง",
+          3: "แบบทดสอบก่อนเรียน (Pre-test)",
+          4: "เมนูหลัก (Main Menu)",
+          5: "หน่วยที่ 1: Decomposition",
+          6: "หน่วยที่ 2: Pattern & Abstraction",
+          7: "หน่วยที่ 3: Algorithm & Flowchart",
+          8: "มินิเกมและใบงานกลุ่ม",
+          9: "ประเมินความพึงพอใจ (Feedback)",
+          10: "แบบทดสอบหลังเรียน (Post-test)",
+          11: "สรุปผลและส่งงาน (Reflection)"
+        };
+        headerTitle.textContent = titles[frameNum] || "วิเคราะห์อัลกอริทึมและการแยกย่อยปัญหา";
+      }
+
+      // Handle Frame Entry Triggers
+      if (frameNum === 2) triggerFrame2Animations();
+      if (frameNum === 3) startPreTest();
+      if (frameNum === 4) refreshMenu();
+      if (frameNum === 10) startPostTest();
+      if (frameNum === 11) renderSummary();
+
+      playClick();
+    }
+
+    function updateStepper(frame) {
+      document.getElementById('frame-stepper-label').textContent = `เฟรม ${frame}/11`;
+      for (let i = 1; i <= 11; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (!dot) continue;
+        dot.className = 'step-dot';
+        if (i === frame) dot.classList.add('active');
+        else if (i < frame) dot.classList.add('completed');
+      }
+
+      // Navigation Buttons Handling
+      const btnBack = document.getElementById('btn-back');
+      const btnFwd = document.getElementById('btn-forward');
+
+      // Disable forward on menu/quiz frames to enforce proper paths
+      if ([1, 3, 4, 8, 10, 11].includes(frame)) {
+        btnFwd.disabled = true;
+      } else {
+        btnFwd.disabled = false;
+      }
+
+      btnBack.disabled = (frame <= 2);
+    }
+
+    function navigateStep(delta) {
+      goToFrame(currentFrame + delta);
+    }
+
+    function goToMenu() {
+      goToFrame(4);
+    }
+
+    function startCourse() {
+      const nameEl = document.getElementById('stu-name');
+      const noEl = document.getElementById('stu-no');
+      let ok = true;
+      [nameEl, noEl].forEach(el => {
+        const empty = !el.value.trim();
+        el.classList.toggle('invalid', empty);
+        if (empty) ok = false;
+      });
+      if (!ok) {
+        alert('กรุณากรอก ชื่อ-นามสกุล และเลขที่ ก่อนเริ่มเรียน');
+        return;
+      }
+      student = { name: nameEl.value.trim(), no: noEl.value.trim() };
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      goToFrame(2);
+    }
+
+    /* ================= FRAME 2: OBJECTIVES ================= */
+    function triggerFrame2Animations() {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById(`obj-${i}`);
+        el.classList.remove('show');
+        setTimeout(() => {
+          el.classList.add('show');
+          playBeep(450 + (i * 80), 'sine', 0.1);
+        }, i * 600);
+      }
+    }
+
+    /* ================= QUESTION REPOSITORY (10 ITEMS) ================= */
+    const questionBank = [
+      {
+        q: "1. สัญลักษณ์ผังงานรูปสี่เหลี่ยมผืนผ้า (Rectangle) ใช้แทนหน้าที่ใดในขั้นตอนวิธี?",
+        options: [
+          "กำหนดจุดเริ่มต้นหรือสิ้นสุด",
+          "การประมวลผล การคำนวณ หรือคำสั่งทั่วไป",
+          "ตรวจสอบเงื่อนไขเพื่อเลือกเส้นทาง",
+          "รับข้อมูลเข้าจากแป้นพิมพ์"
+        ],
+        ans: 1
+      },
+      {
+        q: "2. การคิดเชิงนามธรรม (Abstraction) ตามแนวคิดเชิงคำนวณหมายถึงข้อใด?",
+        options: [
+          "การแตกงานชิ้นใหญ่ออกเป็นงานย่อย",
+          "การค้นหารูปแบบความเหมือนของปัญหา",
+          "การคัดกรองเฉพาะคุณลักษณะสำคัญ และตัดรายละเอียดที่ไม่จำเป็นออก",
+          "การเขียนคำสั่งโปรแกรมทีละบรรทัด"
+        ],
+        ans: 2
+      },
+      {
+        q: "3. จากขั้นตอนการทำแซนด์วิชทอด ข้อใดเป็นการแตกปัญหา (Decomposition) ได้ถูกต้องที่สุด?",
+        options: [
+          "เตรียมของ ➔ ประกอบแซนด์วิช ➔ ทอด ➔ จัดเสิร์ฟ",
+          "ซื้อขนมปัง ➔ เปิดเตาแก๊ส ➔ รับประทาน",
+          "ขนมปัง, ไข่ไก่, น้ำมันพืช, ซอส",
+          "ตรวจอุณหภูมิน้ำมัน ➔ ดับไฟ"
+        ],
+        ans: 0
+      },
+      {
+        q: "4. ระบบรดน้ำต้นไม้อัตโนมัติ: ถ้า H < 40 ให้เปิดน้ำ สัญลักษณ์ใดใช้ตรวจสอบเงื่อนไข H < 40?",
+        options: [
+          "สี่เหลี่ยมด้านขนาน (Input/Output)",
+          "สี่เหลี่ยมขนมเปียกปูน (Decision)",
+          "สี่เหลี่ยมผืนผ้า (Process)",
+          "วงกลมขนาดเล็ก (Connector)"
+        ],
+        ans: 1
+      },
+      {
+        q: "5. คำสั่งขั้นตอนวิธีในข้อใดทำให้ผู้รับคำสั่งวาดภาพได้แม่นยำที่สุดตามแนวคิดอัลกอริทึม?",
+        options: [
+          "วาดรูปบ้านขนาดพอดีตรงกลางกระดาษ",
+          "วาดสี่เหลี่ยมผืนผ้าจุดมุมซ้ายล่างที่พิกัด 5,0 และมุมขวาบนที่พิกัด 15,10",
+          "ลากเส้นตรงให้ดูคล้ายหลังคา",
+          "กะระยะประตูกว้างประมาณ 3 เซนติเมตร"
+        ],
+        ans: 1
+      },
+      {
+        q: "6. สัญลักษณ์สี่เหลี่ยมผืนผ้าขอบมน หรือ วงรี (Oval / Pill) ใช้แทนหน้าที่ใด?",
+        options: [
+          "จุดเริ่มต้นและจุดสิ้นสุดของโปรแกรม (Terminal)",
+          "การกำหนดค่าตัวแปร",
+          "การตัดสินใจเงื่อนไข",
+          "การแสดงผลทางจอภาพ"
+        ],
+        ans: 0
+      },
+      {
+        q: "7. สัญลักษณ์รูปสี่เหลี่ยมด้านขนาน (Parallelogram) ใช้แทนหน้าที่ใด?",
+        options: [
+          "การประมวลผลคำนวณ",
+          "การรับเข้าหรือแสดงผลข้อมูล (Data / Input-Output)",
+          "จุดเชื่อมต่อ",
+          "ลูกศรบอกทิศทาง"
+        ],
+        ans: 1
+      },
+      {
+        q: "8. การจัดกลุ่มยานพาหนะตามจำนวนล้อ และแยกชนิดพืชจากเส้นใบ เป็นทักษะใด?",
+        options: [
+          "Decomposition",
+          "Pattern Recognition (การหารูปแบบ)",
+          "Abstraction",
+          "Testing and Debugging"
+        ],
+        ans: 1
+      },
+      {
+        q: "9. ในการทำแซนด์วิชทอด หากต้องการตรวจสอบว่า 'สีเหลืองทองสุกแล้วหรือไม่' ควรใช้สัญลักษณ์ใด?",
+        options: [
+          "สี่เหลี่ยมผืนผ้า (Process)",
+          "สี่เหลี่ยมขนมเปียกปูน (Decision)",
+          "สี่เหลี่ยมผืนผ้าขอบมน (Terminal)",
+          "สี่เหลี่ยมด้านขนาน (Data)"
+        ],
+        ans: 1
+      },
+      {
+        q: "10. ข้อใดเรียงลำดับองค์ประกอบหลักของขั้นตอนวิธี (Algorithm) ได้ถูกต้อง?",
+        options: [
+          "ผลลัพธ์ ➔ ประมวลผล ➔ ข้อมูลเข้า",
+          "ข้อมูลเข้า (Input) ➔ การประมวลผล (Process) ➔ ข้อมูลออก (Output)",
+          "การตัดสินใจ ➔ ข้อมูลเข้า ➔ ผังงาน",
+          "รหัสลำลอง ➔ เขียนโปรแกรม ➔ แก้ไขข้อผิดพลาด"
+        ],
+        ans: 1
+      }
+    ];
+
+    /* ================= PRE-TEST LOGIC ================= */
+    let preCurrentIdx = 0;
+    let preSelectedAns = null;
+
+    function startPreTest() {
+      preCurrentIdx = 0;
+      preScore = 0;
+      renderPreQuestion();
+    }
+
+    function renderPreQuestion() {
+      const q = questionBank[preCurrentIdx];
+      document.getElementById('pre-q-num').textContent = `แบบทดสอบก่อนเรียน ข้อ ${preCurrentIdx + 1}/10`;
+      document.getElementById('pre-progress').style.width = `${((preCurrentIdx + 1) / 10) * 100}%`;
+      document.getElementById('pre-question-text').textContent = q.q;
+
+      const optsDiv = document.getElementById('pre-options');
+      optsDiv.innerHTML = '';
+      preSelectedAns = null;
+      document.getElementById('pre-next-btn').disabled = true;
+
+      const letters = ['ก', 'ข', 'ค', 'ง'];
+      q.options.forEach((opt, idx) => {
+        const item = document.createElement('div');
+        item.className = 'option-item';
+        item.innerHTML = `<div class="opt-circle">${letters[idx]}</div><div>${opt}</div>`;
+        item.onclick = () => {
+          optsDiv.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          preSelectedAns = idx;
+          document.getElementById('pre-next-btn').disabled = false;
+          playClick();
+        };
+        optsDiv.appendChild(item);
+      });
+
+      document.getElementById('pre-next-btn').textContent = (preCurrentIdx === 9) ? 'ส่งคำตอบก่อนเรียน ➔' : 'ข้อถัดไป ➔';
+    }
+
+    function nextPreQuestion() {
+      if (preSelectedAns === questionBank[preCurrentIdx].ans) {
+        preScore++;
+      }
+      if (preCurrentIdx < 9) {
+        preCurrentIdx++;
+        renderPreQuestion();
+      } else {
+        playDing();
+        sendScore('ก่อน');
+        goToFrame(4); // Move to Main Menu
+      }
+    }
+
+    /* ================= MAIN MENU LOGIC ================= */
+    function refreshMenu() {
+      const count = Object.values(completedUnits).filter(Boolean).length;
+      document.getElementById('menu-progress-label').textContent = `ศึกษาแล้ว ${count}/3 หน่วย`;
+      document.getElementById('menu-bar-fill').style.width = `${(count / 3) * 100}%`;
+
+      for (let i = 1; i <= 3; i++) {
+        const card = document.getElementById(`card-u${i}`);
+        const tag = document.getElementById(`tag-u${i}`);
+        if (completedUnits[i]) {
+          card.classList.add('completed');
+          tag.className = 'status-tag tag-done';
+          tag.textContent = '✓ เรียนแล้ว';
+        } else {
+          card.classList.remove('completed');
+          tag.className = 'status-tag tag-todo';
+          tag.textContent = 'ยังไม่เรียน';
+        }
+      }
+
+      const btnGame = document.getElementById('btn-to-f8');
+      if (count === 3) {
+        btnGame.disabled = false;
+        btnGame.className = 'btn-minigame-lock unlocked';
+        btnGame.innerHTML = '<span>🎮</span> เข้าสู่มินิเกมและใบงานกลุ่ม ➔';
+      } else {
+        btnGame.disabled = true;
+        btnGame.className = 'btn-minigame-lock';
+        btnGame.innerHTML = '<span>🔒</span> มินิเกมและใบงานกลุ่ม (ปลดล็อกเมื่อครบ 3 หน่วย)';
+      }
+    }
+
+    function openUnit(fNum) {
+      goToFrame(fNum);
+    }
+
+    function goToGame() {
+      goToFrame(8);
+    }
+
+    /* ================= UNITS 1, 2, 3 VIDEO & ACTIVITIES ================= */
+    function finishUnit(unitNum) {
+      completedUnits[unitNum] = true;
+      playDing();
+      goToFrame(4);
+    }
+
+    function openActivity(unitNum) {
+      const modal = document.getElementById('modal-activity');
+      const title = document.getElementById('modal-act-title');
+      const content = document.getElementById('modal-act-content');
+
+      if (unitNum === 1) {
+        title.textContent = "🧩 กิจกรรมหน่วยที่ 1: แยกชิ้นส่วนสมาร์ตโฟน (Decomposition)";
+        content.innerHTML = `
+          <p style="margin-bottom:12px;">คลิกที่ชิ้นส่วนเพื่อทำความเข้าใจหน้าที่ขององค์ประกอบย่อย:</p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <button class="nav-btn btn-prev" onclick="alert('หน้าจอสัมผัส (Touchscreen): รับข้อมูลการสัมผัสและแสดงผลกราฟิก')">📱 หน้าจอสัมผัส</button>
+            <button class="nav-btn btn-prev" onclick="alert('แบตเตอรี่ (Battery): กักเก็บและจ่ายพลังงานไฟฟ้าให้อุปกรณ์')">🔋 แบตเตอรี่</button>
+            <button class="nav-btn btn-prev" onclick="alert('กล้องดิจิทัล (Camera): รับสัญญาณแสงแปลงเป็นภาพดิจิทัล')">📷 กล้องถ่ายรูป</button>
+            <button class="nav-btn btn-prev" onclick="alert('ชิปประมวลผล (CPU/SoC): คิดคำนวณและประมวลผลคำสั่ง')">⚙️ ชิปประมวลผล</button>
+          </div>
+        `;
+      } else if (unitNum === 2) {
+        title.textContent = "🔍 กิจกรรมหน่วยที่ 2: จัดกลุ่มยานพาหนะ (Pattern & Abstraction)";
+        content.innerHTML = `
+          <p style="margin-bottom:12px;">จัดกลุ่มยานพาหนะตามความเหมือนของจำนวนล้อ (Pattern):</p>
+          <ul style="line-height:2; font-size:16px;">
+            <li>🚲 <b>จักรยาน</b> ➔ กลุ่มยานพาหนะ 2 ล้อ ขับเคลื่อนด้วยแรงคน</li>
+            <li>🏍️ <b>มอเตอร์ไซค์</b> ➔ กลุ่มยานพาหนะ 2 ล้อ ขับเคลื่อนด้วยเครื่องยนต์</li>
+            <li>🚗 <b>รถยนต์</b> ➔ กลุ่มยานพาหนะ 4 ล้อ สำหรับบรรสารโดยสาร</li>
+            <li>🚁 <b>โดรน</b> ➔ กลุ่มยานพาหนะไร้คนขับ บินด้วยใบพัด</li>
+          </ul>
+        `;
+      } else if (unitNum === 3) {
+        title.textContent = "📊 กิจกรรมหน่วยที่ 3: ต่อผังงานระบบรดน้ำต้นไม้ (Algorithm)";
+        content.innerHTML = `
+          <p style="margin-bottom:10px;">เรียงลำดับขั้นตอนระบบรดน้ำต้นไม้อัตโนมัติ:</p>
+          <div style="background:#eaf3fa; padding:15px; border-radius:10px; font-family:monospace; font-size:16px;">
+            1. [เริ่มต้น] (Terminal)<br>
+            2. [อ่านค่าความชื้นในดิน H] (Data In)<br>
+            3. &lt;ความชื้น H &lt; 40 หรือไม่?&gt; (Decision)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;├─ ถ้าใช่: [สั่งเปิดวาล์วน้ำ] (Process)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;└─ ถ้าไม่ใช่: [สั่งปิดวาล์วน้ำ] (Process)<br>
+            4. [สิ้นสุดการทำงาน] (Terminal)
+          </div>
+        `;
+      }
+      modal.style.display = 'flex';
+      playClick();
+    }
+
+    function closeActivity() {
+      document.getElementById('modal-activity').style.display = 'none';
+    }
+
+    /* ================= FRAME 8: MINI-GAME MATCHING ================= */
+    let selectedLeft = null;
+    let matchCount = 0;
+
+    function selectMatchLeft(el) {
+      if (el.classList.contains('matched')) return;
+      document.querySelectorAll('#col-left .match-card').forEach(c => c.classList.remove('active-select'));
+      el.classList.add('active-select');
+      selectedLeft = el;
+      playClick();
+    }
+
+    function selectMatchRight(el) {
+      if (!selectedLeft || el.classList.contains('matched')) return;
+      const targetId = selectedLeft.getAttribute('data-id');
+      const matchVal = el.getAttribute('data-match');
+
+      if (targetId === matchVal) {
+        // Correct
+        playDing();
+        selectedLeft.classList.remove('active-select');
+        selectedLeft.classList.add('matched');
+        el.classList.add('matched');
+        selectedLeft = null;
+        matchCount++;
+        document.getElementById('game-score').textContent = matchCount;
+
+        if (matchCount === 5) {
+          const btnPost = document.getElementById('btn-to-posttest');
+          btnPost.disabled = false;
+          btnPost.textContent = 'ไปประเมินความพึงพอใจ ➔';
+          btnPost.style.backgroundColor = 'var(--btn-orange)';
+          playDing();
+        }
+      } else {
+        // Wrong
+        playBuzz();
+        el.style.borderColor = 'var(--error-red)';
+        setTimeout(() => el.style.borderColor = 'var(--border-gray)', 600);
+      }
+    }
+
+    function goToPostTest() {
+      goToFrame(9); // หน้าประเมินความพึงพอใจ ก่อนทำแบบทดสอบหลังเรียน
+    }
+
+    /* ================= POST-TEST & RETRY (FRAME 10 & retry modal) ================= */
+    let postCurrentIdx = 0;
+    let postSelectedAns = null;
+
+    function startPostTest() {
+      postCurrentIdx = 0;
+      postScore = 0;
+      renderPostQuestion();
+    }
+
+    function renderPostQuestion() {
+      const q = questionBank[postCurrentIdx];
+      document.getElementById('post-q-num').textContent = `แบบทดสอบหลังเรียน ข้อ ${postCurrentIdx + 1}/10`;
+      document.getElementById('post-progress').style.width = `${((postCurrentIdx + 1) / 10) * 100}%`;
+      document.getElementById('post-question-text').textContent = q.q;
+
+      const optsDiv = document.getElementById('post-options');
+      optsDiv.innerHTML = '';
+      postSelectedAns = null;
+      document.getElementById('post-next-btn').disabled = true;
+
+      const letters = ['ก', 'ข', 'ค', 'ง'];
+      q.options.forEach((opt, idx) => {
+        const item = document.createElement('div');
+        item.className = 'option-item';
+        item.innerHTML = `<div class="opt-circle">${letters[idx]}</div><div>${opt}</div>`;
+        item.onclick = () => {
+          optsDiv.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+          item.classList.add('selected');
+          postSelectedAns = idx;
+          document.getElementById('post-next-btn').disabled = false;
+          playClick();
+        };
+        optsDiv.appendChild(item);
+      });
+
+      document.getElementById('post-next-btn').textContent = (postCurrentIdx === 9) ? 'ส่งคำตอบและประเมินผล ➔' : 'ข้อถัดไป ➔';
+    }
+
+    function nextPostQuestion() {
+      if (postSelectedAns === questionBank[postCurrentIdx].ans) {
+        postScore++;
+      }
+      if (postCurrentIdx < 9) {
+        postCurrentIdx++;
+        renderPostQuestion();
+      } else {
+        // Evaluate score against 70% threshold (7 of 10)
+        sendScore('หลัง');
+        if (postScore >= 7) {
+          playDing();
+          goToFrame(11);
+        } else {
+          playBuzz();
+          showRetryModal();
+        }
+      }
+    }
+
+    function showRetryModal() {
+      const modal = document.getElementById('modal-retry');
+      document.getElementById('retry-score-text').textContent = `${postScore} / 10`;
+      modal.style.display = 'flex';
+    }
+
+    function closeRetryAndGoMenu() {
+      document.getElementById('modal-retry').style.display = 'none';
+      goToFrame(4);
+    }
+
+    /* ================= FRAME 11: SUMMARY & REFLECTION ================= */
+    function renderSummary() {
+      document.getElementById('final-score-val').textContent = `${postScore}/10`;
+      const pct = (postScore / 10) * 100;
+      document.getElementById('final-pct-val').textContent = `ร้อยละ ${pct}`;
+      document.getElementById('score-circle').style.background = `conic-gradient(var(--success-green) ${pct * 3.6}deg, #E1E8EF 0deg)`;
+      document.getElementById('summary-pre-score').textContent = `${preScore} / 10`;
+      document.getElementById('summary-post-score').textContent = `${postScore} / 10`;
+    }
+
+    function submitReflection() {
+      const txt = document.getElementById('reflection-text').value.trim();
+      if (!txt) {
+        alert("กรุณากรอกบันทึกสะท้อนคิดก่อนส่งงาน");
+        return;
+      }
+      playDing();
+      sendScore('สะท้อนคิด', { reflection: txt });
+      alert("✓ ส่งบันทึกสะท้อนคิดและคะแนนเรียบร้อยแล้ว!");
+    }
+
+    function finishAll() {
+      playDing();
+      alert("ยินดีด้วย! คุณสำเร็จการเรียนรู้เรื่อง 'วิเคราะห์อัลกอริทึมและการแยกย่อยปัญหา' เรียบร้อยแล้ว");
+      goToFrame(1);
+    }
+  </script>
+</body>
+</html>
