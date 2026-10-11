@@ -1023,7 +1023,7 @@
           <div class="vdo-embed">
             <h3>คลิปที่ 1: การแยกส่วนประกอบ (Decomposition)</h3>
             <div class="vdo-frame">
-              <iframe src="https://www.youtube.com/embed/gBi0t14EUkg?rel=0" title="คลิปที่ 1: การแยกส่วนประกอบ (Decomposition)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe id="vdo-1" src="https://www.youtube.com/embed/gBi0t14EUkg?rel=0&enablejsapi=1" title="คลิปที่ 1: การแยกส่วนประกอบ (Decomposition)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
           </div>
           <div class="unit-actions">
@@ -1038,7 +1038,7 @@
           <div class="vdo-embed">
             <h3>คลิปที่ 2: การหารูปแบบและคิดเชิงนามธรรม (Pattern & Abstraction)</h3>
             <div class="vdo-frame">
-              <iframe src="https://www.youtube.com/embed/Hb8DcPRnQwQ?rel=0" title="คลิปที่ 2: การหารูปแบบและคิดเชิงนามธรรม (Pattern & Abstraction)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe id="vdo-2" src="https://www.youtube.com/embed/Hb8DcPRnQwQ?rel=0&enablejsapi=1" title="คลิปที่ 2: การหารูปแบบและคิดเชิงนามธรรม (Pattern & Abstraction)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
           </div>
           <div class="unit-actions">
@@ -1053,7 +1053,7 @@
           <div class="vdo-embed">
             <h3>คลิปที่ 3: ขั้นตอนวิธีและผังงาน (Algorithm & Flowchart)</h3>
             <div class="vdo-frame">
-              <iframe src="https://www.youtube.com/embed/ThpK8B9Xjsg?rel=0" title="คลิปที่ 3: ขั้นตอนวิธีและผังงาน (Algorithm & Flowchart)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+              <iframe id="vdo-3" src="https://www.youtube.com/embed/ThpK8B9Xjsg?rel=0&enablejsapi=1" title="คลิปที่ 3: ขั้นตอนวิธีและผังงาน (Algorithm & Flowchart)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
           </div>
           <div class="unit-actions">
@@ -1207,7 +1207,17 @@
     let preScore = 0;
     let preTestDone = false;
     let postScore = 0;
-        let student = { name: '', no: '' };
+    let student = { name: '', no: '' };
+
+    /* ================= STOP ALL VIDEOS ON FRAME CHANGE ================= */
+    function stopAllVideos() {
+      const iframes = document.querySelectorAll('.vdo-frame iframe');
+      iframes.forEach(iframe => {
+        if (iframe.contentWindow) {
+          iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        }
+      });
+    }
 
     /* ================= SEND SCORES TO GOOGLE SHEETS (open in Excel) ================= */
     // วาง URL ของ Google Apps Script Web App ตรงนี้ (ลงท้ายด้วย /exec)
@@ -1262,6 +1272,9 @@
 
     /* ================= NAVIGATION CONTROLLER ================= */
     function goToFrame(frameNum) {
+      // สั่งหยุดวิดีโอทั้งหมดทันทีที่กดเปลี่ยนหน้า
+      stopAllVideos();
+
       // Validate bounds
       if (frameNum < 1 || frameNum > 11) return;
       // ทำแบบทดสอบก่อนเรียนเสร็จแล้ว ห้ามย้อนกลับไปทำซ้ำ
