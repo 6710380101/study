@@ -26,7 +26,7 @@
       margin: 0;
       padding: 0;
       font-family: 'Sarabun', sans-serif;
-      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
@@ -41,10 +41,11 @@
 
     /* Screen Wrapper: 16:9 Ratio Aspect (1280x720 Base) */
     #app-container {
-      width: 100vw;
+      width: 100%;
       max-width: 1280px;
-      height: 56.25vw;
-      max-height: 720px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      height: auto;
       background-color: var(--bg-color);
       position: relative;
       overflow: hidden;
@@ -230,7 +231,7 @@
     /* Frame 1: Title Screen */
     #frame-1 {
       position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
+      top: 0; left: 0; width: 100%; min-height: 100%; height: 100%;
       background: linear-gradient(135deg, #1F4E79 0%, #2E86AB 100%);
       color: var(--white);
       border-radius: 0;
@@ -782,6 +783,73 @@
       width: 100px;
       height: 40px;
     }
+
+    /* Responsive layout: desktop, tablet and mobile */
+    @media (max-width: 900px) {
+      #app-container { min-height: 100vh; min-height: 100dvh; }
+      header.top-bar { min-height: 68px; height: auto; padding: 12px 18px; gap: 12px; }
+      .lesson-title-header { font-size: 18px; }
+      main.content-area { padding: 16px; align-items: stretch; }
+      .frame-card { min-height: 480px; padding: 22px; }
+      #frame-1 { padding: 40px 28px; }
+      .f1-title { font-size: clamp(30px, 5vw, 46px); }
+      .f1-sub { font-size: 20px; }
+      .f1-anim { width: min(30%, 260px); }
+      .grid-2col, .f10-grid { grid-template-columns: 1fr; }
+      .menu-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+      .unit-card { padding: 16px 10px; }
+      .bottom-menu-bar { gap: 12px; flex-wrap: wrap; }
+      footer.bottom-bar { min-height: 72px; height: auto; padding: 12px 16px; gap: 10px; }
+      .nav-btn { min-width: 0; font-size: 16px; padding: 10px 14px; }
+      .stepper { gap: 5px; }
+      .step-dot { width: 8px; height: 8px; }
+      .step-dot.active { width: 18px; }
+      .frame-label { font-size: 12px; margin-left: 3px; }
+    }
+    @media (max-width: 600px) {
+      body { display: block; }
+      #app-container { width: 100%; max-width: none; min-height: 100vh; min-height: 100dvh; }
+      header.top-bar { padding: 10px 12px; }
+      .top-left { gap: 8px; min-width: 0; }
+      .logo-badge { font-size: 12px; padding: 5px 8px; }
+      .lesson-title-header { font-size: 14px; line-height: 1.3; }
+      .top-right { gap: 6px; }
+      .icon-btn { width: 38px; height: 38px; flex-shrink: 0; }
+      main.content-area { padding: 10px; }
+      .frame-card { border-radius: 14px; padding: 16px; min-height: 0; }
+      #frame-1 { padding: 28px 18px; min-height: 100vh; min-height: 100dvh; }
+      .f1-layout { flex-direction: column; justify-content: center; gap: 20px; }
+      .f1-text { max-width: 100%; width: 100%; }
+      .f1-title { font-size: clamp(28px, 8vw, 40px); }
+      .f1-badge { font-size: 15px; }
+      .f1-sub { font-size: 17px; }
+      .student-form { flex-direction: column; }
+      #stu-name, #stu-no { width: 100%; min-height: 46px; font-size: 16px; }
+      .btn-start { font-size: 20px; padding: 12px 28px; }
+      .f1-anim { width: 150px; max-width: 55%; }
+      .grid-2col, .f10-grid, .matching-cols { grid-template-columns: 1fr; gap: 14px; }
+      .sub-card { padding: 16px; }
+      .menu-cards { grid-template-columns: 1fr; margin: 16px 0; }
+      .unit-card { min-height: 150px; }
+      .bottom-menu-bar { align-items: stretch; flex-direction: column; }
+      .bottom-menu-bar .progress-bar-bg { max-width: 100%; }
+      .btn-minigame-lock { justify-content: center; font-size: 16px; padding: 12px; }
+      .question-box { font-size: 18px; padding: 14px; }
+      .option-item { font-size: 16px; padding: 12px; gap: 10px; }
+      .match-card { font-size: 15px; }
+      footer.bottom-bar { position: sticky; bottom: 0; padding: 10px 8px; gap: 6px; }
+      footer .nav-btn { font-size: 13px; padding: 9px 8px; }
+      .stepper { gap: 3px; }
+      .step-dot { width: 5px; height: 5px; }
+      .step-dot.active { width: 12px; }
+      .frame-label { display: none; }
+      .btn-form-link { font-size: 18px; padding: 12px 18px; }
+      .vdo-embed h3 { font-size: 17px; }
+    }
+    @media (max-width: 380px) {
+      .stepper .step-dot:nth-child(n+7) { display: none; }
+      .nav-btn { font-size: 12px; }
+    }
   </style>
 </head>
 <body>
@@ -797,7 +865,7 @@
           <div class="f1-sub">วิชาวิทยาการคำนวณ ชั้นมัธยมศึกษาปีที่ 4</div>
           <div class="student-form">
             <input type="text" id="stu-name" placeholder="ชื่อ-นามสกุล" autocomplete="off">
-            <input type="text" id="stu-no" placeholder="เลขที่" inputmode="numeric" autocomplete="off">
+            <input type="text" id="stu-no" placeholder="เลขที่" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="เลขที่" maxlength="3">
           </div>
           <button class="btn-start" onclick="startCourse()">เริ่มเรียน ➜</button>
           <div style="margin-top: 40px; font-size: 16px; color: #a5c7e8;">
@@ -1042,7 +1110,7 @@
           <span>📋</span> เปิดแบบประเมิน (Google Form) ➜
         </a>
         <p style="font-size: 14px; color: #7b8895; margin-top: 14px;">ลิงก์จะเปิดในแท็บใหม่ ใช้เวลาประมาณ 2-3 นาที ตอบเสร็จแล้วกลับมาที่หน้านี้เพื่อทำแบบทดสอบต่อ</p>
-        <button class="nav-btn btn-next" style="margin-top: 22px;" onclick="goToFrame(10)">ไปทำแบบทดสอบหลังเรียน ➔</button>
+        <button class="nav-btn btn-next" style="margin-top: 22px;" onclick="goToFrame(10)">ไปทดสอบความรู้หลังเรียน ➔</button>
       </div>
 
       <!-- FRAME 10: Post-test -->
@@ -1050,8 +1118,8 @@
         <div class="quiz-container">
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size: 20px; font-weight:700; color:var(--primary-navy);" id="post-q-num">แบบทดสอบหลังเรียน ข้อ 1/10</span>
-              <span style="color:var(--error-red); font-weight:600; font-size:16px;">เกณฑ์ผ่านร้อยละ 70 (7/10 ข้อ)</span>
+              <span style="font-size: 20px; font-weight:700; color:var(--primary-navy);" id="post-q-num">ทดสอบความรู้หลังเรียน ข้อ 1/10</span>
+              <span style="color:#6e8294; font-size:16px;">(ไม่นับคะแนน ลองทำดูได้เลย)</span>
             </div>
             <div class="progress-bar-bg">
               <div class="progress-bar-fill" id="post-progress"></div>
@@ -1071,15 +1139,16 @@
         <div class="f10-grid">
           
           <div class="score-circle-wrap">
-            <h3 style="color:var(--primary-navy); margin-bottom:12px;">ผลการทดสอบหลังเรียน</h3>
+            <h3 style="color:var(--primary-navy); margin-bottom:12px;">ผลการทดสอบความรู้หลังเรียน</h3>
             <div class="circular-progress" id="score-circle">
               <div class="inner-circle">
                 <span style="font-size: 32px; font-weight:700; color:var(--primary-navy);" id="final-score-val">0/10</span>
                 <span style="font-size: 14px; color:#5c7389;" id="final-pct-val">ร้อยละ 0</span>
               </div>
             </div>
-            <div style="background:#DFF3E3; color:var(--success-green); padding:6px 16px; border-radius:16px; font-weight:700; margin-bottom:15px;">
-              ✓ ผ่านเกณฑ์การประเมิน
+            <div id="score-msg" style="background:#DFF3E3; color:#1f6f43; padding:10px 14px; border-radius:14px; margin-bottom:12px; text-align:center; width:100%;">
+              <div id="score-msg-title" style="font-weight:700; font-size:17px;"></div>
+              <div id="score-msg-text" style="font-size:14px; line-height:1.5; margin-top:2px;"></div>
             </div>
             <div style="width:100%; font-size:15px; color:#4a5f73;">
               <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
@@ -1093,20 +1162,12 @@
             </div>
           </div>
 
-          <div class="reflection-box">
-            <div>
-              <h3 style="color:var(--primary-navy); margin-bottom:8px;">บันทึกสะท้อนคิด (Reflection Journal)</h3>
-              <p style="font-size:14px; color:#58697a; margin-bottom:10px;">
-                1) ได้เรียนรู้อะไรเกี่ยวกับขั้นตอนวิธีและผังงาน? <br>
-                2) จุดใดที่ยังอยากฝึกเพิ่มเติม? <br>
-                3) จะนำไปปรับใช้กับการแก้ปัญหาอย่างไร?
-              </p>
-              <textarea class="reflection-textarea" id="reflection-text" placeholder="พิมพ์ข้อความสะท้อนคิดที่นี่..."></textarea>
-            </div>
-            <div style="display:flex; gap:10px; margin-top:10px;">
-              <button class="nav-btn btn-next" style="flex:1;" onclick="submitReflection()">ส่งคะแนนและบันทึกสะท้อนคิด</button>
-              <button class="nav-btn btn-prev" style="min-width:auto;" onclick="finishAll()">จบการเรียน 🏁</button>
-            </div>
+          <div class="score-circle-wrap" style="justify-content:center;">
+            <h3 style="color:var(--primary-navy); margin-bottom:12px;">สรุปผลการเรียน</h3>
+            <p style="font-size:18px; color:#4a5f73; text-align:center; line-height:1.8;">
+              ตรวจสอบคะแนนก่อนเรียนและหลังเรียนได้จากด้านซ้าย
+            </p>
+            <button class="nav-btn btn-next" style="margin-top:24px;" onclick="finishAll()">จบการเรียน 🏁</button>
           </div>
 
         </div>
@@ -1135,20 +1196,6 @@
 
       <button class="nav-btn btn-next" id="btn-forward" onclick="navigateStep(1)">ถัดไป ❯</button>
     </footer>
-
-    <!-- POPUP MODAL 9.1: Retry Notice -->
-    <div class="modal-overlay" id="modal-retry">
-      <div class="modal-card">
-        <div style="width:70px; height:70px; background:#fde8e8; border-radius:35px; display:inline-flex; align-items:center; justify-content:center; color:var(--error-red); font-size:36px; margin-bottom:15px;">✖</div>
-        <h2 style="color:var(--error-red); font-size:28px; margin-bottom:10px;">ยังไม่ผ่านเกณฑ์</h2>
-        <div style="font-size:42px; font-weight:700; color:var(--primary-navy);" id="retry-score-text">5 / 10</div>
-        <p style="color:#576b7d; font-size:18px; margin: 10px 0;">(เกณฑ์ผ่านคือร้อยละ 70 ขึ้นไป หรือ 7 ข้อขึ้นไป)</p>
-        <div style="background:var(--highlight-yellow); border-radius:12px; padding:15px; font-weight:600; font-size:16px; margin:20px 0; color:#4e3900;">
-          ไม่เป็นไรนะ ลองกลับไปทบทวนคลิปในหน่วยที่ยังไม่มั่นใจ แล้วกลับมาทำแบบทดสอบอีกครั้ง!
-        </div>
-        <button class="nav-btn btn-next" style="width:100%;" onclick="closeRetryAndGoMenu()">ทบทวนบทเรียน (กลับเมนูหลัก)</button>
-      </div>
-    </div>
 
   </div>
 
@@ -1247,7 +1294,7 @@
           7: "หน่วยที่ 3: Algorithm & Flowchart",
           8: "มินิเกมและใบงานกลุ่ม",
           9: "ประเมินความพึงพอใจ (Feedback)",
-          10: "แบบทดสอบหลังเรียน (Post-test)",
+          10: "ทดสอบความรู้หลังเรียน",
           11: "สรุปผลและส่งงาน (Reflection)"
         };
         headerTitle.textContent = titles[frameNum] || "วิเคราะห์อัลกอริทึมและการแยกย่อยปัญหา";
@@ -1294,6 +1341,12 @@
     function goToMenu() {
       goToFrame(4);
     }
+
+    // เลขที่รับเฉพาะตัวเลข 0-9 ทั้งการพิมพ์และวางข้อความ
+    document.getElementById('stu-no').addEventListener('input', function () {
+      this.value = this.value.replace(/[^0-9]/g, '');
+      this.classList.remove('invalid');
+    });
 
     function startCourse() {
       const nameEl = document.getElementById('stu-name');
@@ -1575,10 +1628,10 @@
     }
 
     function goToPostTest() {
-      goToFrame(9); // หน้าประเมินความพึงพอใจ ก่อนทำแบบทดสอบหลังเรียน
+      goToFrame(9); // หน้าประเมินความพึงพอใจ ก่อนทดสอบความรู้หลังเรียน
     }
 
-    /* ================= POST-TEST & RETRY (FRAME 10 & retry modal) ================= */
+    /* ================= POST-TEST (FRAME 10) ================= */
     let postCurrentIdx = 0;
     let postSelectedAns = null;
 
@@ -1590,7 +1643,7 @@
 
     function renderPostQuestion() {
       const q = questionBank[postCurrentIdx];
-      document.getElementById('post-q-num').textContent = `แบบทดสอบหลังเรียน ข้อ ${postCurrentIdx + 1}/10`;
+      document.getElementById('post-q-num').textContent = `ทดสอบความรู้หลังเรียน ข้อ ${postCurrentIdx + 1}/10`;
       document.getElementById('post-progress').style.width = `${((postCurrentIdx + 1) / 10) * 100}%`;
       document.getElementById('post-question-text').textContent = q.q;
 
@@ -1625,27 +1678,11 @@
         postCurrentIdx++;
         renderPostQuestion();
       } else {
-        // Evaluate score against 70% threshold (7 of 10)
+        // ไม่มีผ่าน/ไม่ผ่าน แสดงข้อความให้กำลังใจตามคะแนนในหน้าสรุป
         sendScore('หลัง');
-        if (postScore >= 7) {
-          playDing();
-          goToFrame(11);
-        } else {
-          playBuzz();
-          showRetryModal();
-        }
+        playDing();
+        goToFrame(11);
       }
-    }
-
-    function showRetryModal() {
-      const modal = document.getElementById('modal-retry');
-      document.getElementById('retry-score-text').textContent = `${postScore} / 10`;
-      modal.style.display = 'flex';
-    }
-
-    function closeRetryAndGoMenu() {
-      document.getElementById('modal-retry').style.display = 'none';
-      goToFrame(4);
     }
 
     /* ================= FRAME 11: SUMMARY & REFLECTION ================= */
@@ -1654,19 +1691,21 @@
       const pct = (postScore / 10) * 100;
       document.getElementById('final-pct-val').textContent = `ร้อยละ ${pct}`;
       document.getElementById('score-circle').style.background = `conic-gradient(var(--success-green) ${pct * 3.6}deg, #E1E8EF 0deg)`;
+      // ข้อความให้กำลังใจ/ชมเชยตามคะแนน (ไม่มีผ่าน/ไม่ผ่าน)
+      let m;
+      if (postScore <= 4) {
+        m = { bg:'#FFF1D6', fg:'#8a5300', t:'💪 พยายามอีกนิดนะ เธอทำได้!', d:'ไม่เป็นไรเลย ทุกคนเริ่มจากตรงนี้ได้ ลองกลับไปดูคลิปอีกครั้ง แล้วมาถามครูในห้องเรียนได้เลย' };
+      } else if (postScore <= 7) {
+        m = { bg:'#E3F0FB', fg:'#1F4E79', t:'👍 ทำได้ดีเลย!', d:'เข้าใจเนื้อหาไปได้ส่วนใหญ่แล้ว ลองทบทวนจุดที่ยังไม่มั่นใจ แล้วมาต่อยอดกันในห้องเรียน' };
+      } else {
+        m = { bg:'#DFF3E3', fg:'#1f6f43', t:'🎉 เก่งมาก ยอดเยี่ยม!', d:'เธอเข้าใจเนื้อหาได้ดีมาก พร้อมลุยกิจกรรมในห้องเรียนแล้ว' };
+      }
+      const box = document.getElementById('score-msg');
+      box.style.background = m.bg; box.style.color = m.fg;
+      document.getElementById('score-msg-title').textContent = m.t;
+      document.getElementById('score-msg-text').textContent = m.d;
       document.getElementById('summary-pre-score').textContent = `${preScore} / 10`;
       document.getElementById('summary-post-score').textContent = `${postScore} / 10`;
-    }
-
-    function submitReflection() {
-      const txt = document.getElementById('reflection-text').value.trim();
-      if (!txt) {
-        alert("กรุณากรอกบันทึกสะท้อนคิดก่อนส่งงาน");
-        return;
-      }
-      playDing();
-      sendScore('สะท้อนคิด', { reflection: txt });
-      alert("✓ ส่งบันทึกสะท้อนคิดและคะแนนเรียบร้อยแล้ว!");
     }
 
     function finishAll() {
