@@ -565,10 +565,17 @@
 
     /* Frame 5,6,7: Units (Video & Layout) */
     .unit-layout {
-      display: grid;
-      grid-template-columns: 1.4fr 1fr;
-      gap: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
       height: 100%;
+    }
+
+    .unit-layout .vdo-embed,
+    .unit-layout .unit-actions {
+      width: min(100%, 640px);
     }
 
     .vdo-embed h3 {
@@ -951,20 +958,8 @@
               <iframe src="https://www.youtube.com/embed/gBi0t14EUkg?rel=0" title="คลิปที่ 1: การแยกส่วนประกอบ (Decomposition)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
           </div>
-          <div style="display:flex; flex-direction:column; justify-content:space-between;">
-            <div class="summary-card">
-              <h4 style="color:var(--primary-navy); margin-bottom:8px; font-size:20px;">📌 สรุปสาระสำคัญ</h4>
-              <ul style="padding-left:20px; font-size:16px; color:#33485d; line-height: 1.7;">
-                <li><b>Decomposition:</b> การแตกปัญหาหรือสิ่งของที่ซับซ้อนออกเป็นส่วนย่อย ๆ ให้จัดการง่าย</li>
-                <li><b>สมาร์ตโฟน:</b> จอสัมผัส แบตเตอรี่ กล้อง เมนบอร์ด ชิป</li>
-                <li><b>แซนด์วิชทอด:</b> เตรียมของ ➔ ประกอบ ➔ ทอด ➔ จัดเสิร์ฟ</li>
-              </ul>
-            </div>
-            <div class="practice-callout">
-              <b>💡 ลองทำ: กิจกรรมแยกชิ้นส่วนสมาร์ตโฟน</b>
-              <button class="nav-btn btn-next" style="min-width:auto; padding:8px 16px; font-size:16px;" onclick="openActivity(1)">เริ่มกิจกรรมย่อย ➔</button>
-            </div>
-            <button class="nav-btn btn-next" style="margin-top:10px; width:100%;" id="btn-finish-u1" onclick="finishUnit(1)">✓ เรียนจบหน่วยนี้ (กลับเมนู)</button>
+          <div class="unit-actions">
+            <button class="nav-btn btn-next" style="width:100%;" id="btn-finish-u1" onclick="finishUnit(1)">✓ เรียนจบหน่วยนี้ (กลับเมนู)</button>
           </div>
         </div>
       </div>
@@ -978,20 +973,8 @@
               <iframe src="https://www.youtube.com/embed/Hb8DcPRnQwQ?rel=0" title="คลิปที่ 2: การหารูปแบบและคิดเชิงนามธรรม (Pattern & Abstraction)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
           </div>
-          <div style="display:flex; flex-direction:column; justify-content:space-between;">
-            <div class="summary-card">
-              <h4 style="color:var(--primary-navy); margin-bottom:8px; font-size:20px;">📌 สรุปสาระสำคัญ</h4>
-              <ul style="padding-left:20px; font-size:16px; color:#33485d; line-height: 1.7;">
-                <li><b>Pattern Recognition:</b> มองหาความเหมือน เพื่อนำวิธีการแก้ปัญหาเดิมมาใช้ซ้ำ</li>
-                <li><b>ตัวอย่าง:</b> การจัดกลุ่มยานพาหนะตามล้อ/การใช้งาน, การจำแนกพืชใบเลี้ยงเดี่ยว/คู่</li>
-                <li><b>Abstraction:</b> เก็บเฉพาะสาระสำคัญ ตัดสิ่งที่ไม่เกี่ยวข้องออก เพื่อสร้างแบบจำลอง (Model)</li>
-              </ul>
-            </div>
-            <div class="practice-callout">
-              <b>💡 ลองทำ: กิจกรรมจัดกลุ่มยานพาหนะ</b>
-              <button class="nav-btn btn-next" style="min-width:auto; padding:8px 16px; font-size:16px;" onclick="openActivity(2)">เริ่มกิจกรรมย่อย ➔</button>
-            </div>
-            <button class="nav-btn btn-next" style="margin-top:10px; width:100%;" id="btn-finish-u2" onclick="finishUnit(2)">✓ เรียนจบหน่วยนี้ (กลับเมนู)</button>
+          <div class="unit-actions">
+            <button class="nav-btn btn-next" style="width:100%;" id="btn-finish-u2" onclick="finishUnit(2)">✓ เรียนจบหน่วยนี้ (กลับเมนู)</button>
           </div>
         </div>
       </div>
@@ -1005,21 +988,8 @@
               <iframe src="https://www.youtube.com/embed/ThpK8B9Xjsg?rel=0" title="คลิปที่ 3: ขั้นตอนวิธีและผังงาน (Algorithm & Flowchart)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
             </div>
           </div>
-          <div style="display:flex; flex-direction:column; justify-content:space-between;">
-            <div class="summary-card">
-              <h4 style="color:var(--primary-navy); margin-bottom:8px; font-size:20px;">📌 สรุปสาระสำคัญ</h4>
-              <p style="font-size:15px; margin-bottom:8px;"><b>Algorithm:</b> ลำดับคำสั่งที่ชัดเจนประกอบด้วย ข้อมูลเข้า ➔ ประมวลผล ➔ แสดงผล</p>
-              <div style="background:#edf5fb; border-radius:10px; padding:10px; font-size:14px; text-align:center;">
-                <b>ตัวอย่างผังงานระบบรดน้ำต้นไม้:</b><br>
-                [เริ่มต้น] ➔ [รับค่าความชื้น H] ➔ {H &lt; 40 ?} ➔ <br>
-                (ใช่: เปิดน้ำ / ไม่ใช่: ปิดน้ำ) ➔ [สิ้นสุด]
-              </div>
-            </div>
-            <div class="practice-callout">
-              <b>💡 ลองทำ: กิจกรรมต่อบล็อกผังงานรดน้ำ</b>
-              <button class="nav-btn btn-next" style="min-width:auto; padding:8px 16px; font-size:16px;" onclick="openActivity(3)">เริ่มกิจกรรมย่อย ➔</button>
-            </div>
-            <button class="nav-btn btn-next" style="margin-top:10px; width:100%;" id="btn-finish-u3" onclick="finishUnit(3)">✓ เรียนจบหน่วยนี้ (กลับเมนู)</button>
+          <div class="unit-actions">
+            <button class="nav-btn btn-next" style="width:100%;" id="btn-finish-u3" onclick="finishUnit(3)">✓ เรียนจบหน่วยนี้ (กลับเมนู)</button>
           </div>
         </div>
       </div>
@@ -1180,17 +1150,6 @@
       </div>
     </div>
 
-    <!-- POPUP MODALS FOR MINI ACTIVITIES (Units 1, 2, 3) -->
-    <div class="modal-overlay" id="modal-activity">
-      <div class="modal-card" style="max-width:680px; text-align:left;">
-        <h3 id="modal-act-title" style="color:var(--primary-navy); margin-bottom:15px;">กิจกรรมย่อย</h3>
-        <div id="modal-act-content"></div>
-        <div style="text-align:right; margin-top:20px;">
-          <button class="nav-btn btn-next" onclick="closeActivity()">เข้าใจแล้ว / ปิดหน้าต่าง</button>
-        </div>
-      </div>
-    </div>
-
   </div>
 
   <script>
@@ -1199,6 +1158,7 @@
     let completedUnits = { 1: false, 2: false, 3: false };
     let soundEnabled = true;
     let preScore = 0;
+    let preTestDone = false;
     let postScore = 0;
         let student = { name: '', no: '' };
 
@@ -1257,6 +1217,8 @@
     function goToFrame(frameNum) {
       // Validate bounds
       if (frameNum < 1 || frameNum > 11) return;
+      // ทำแบบทดสอบก่อนเรียนเสร็จแล้ว ห้ามย้อนกลับไปทำซ้ำ
+      if (preTestDone && frameNum >= 2 && frameNum <= 3) return;
       
       // Update UI active card
       document.querySelectorAll('.frame-card').forEach(f => f.classList.remove('active'));
@@ -1322,7 +1284,7 @@
         btnFwd.disabled = false;
       }
 
-      btnBack.disabled = (frame <= 2);
+      btnBack.disabled = (frame <= 2) || (frame === 4 && preTestDone);
     }
 
     function navigateStep(delta) {
@@ -1347,6 +1309,7 @@
         return;
       }
       student = { name: nameEl.value.trim(), no: noEl.value.trim() };
+      preTestDone = false;
       if (audioCtx.state === 'suspended') audioCtx.resume();
       goToFrame(2);
     }
@@ -1515,6 +1478,7 @@
         renderPreQuestion();
       } else {
         playDing();
+        preTestDone = true;
         sendScore('ก่อน');
         goToFrame(4); // Move to Main Menu
       }
@@ -1567,54 +1531,6 @@
       goToFrame(4);
     }
 
-    function openActivity(unitNum) {
-      const modal = document.getElementById('modal-activity');
-      const title = document.getElementById('modal-act-title');
-      const content = document.getElementById('modal-act-content');
-
-      if (unitNum === 1) {
-        title.textContent = "🧩 กิจกรรมหน่วยที่ 1: แยกชิ้นส่วนสมาร์ตโฟน (Decomposition)";
-        content.innerHTML = `
-          <p style="margin-bottom:12px;">คลิกที่ชิ้นส่วนเพื่อทำความเข้าใจหน้าที่ขององค์ประกอบย่อย:</p>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-            <button class="nav-btn btn-prev" onclick="alert('หน้าจอสัมผัส (Touchscreen): รับข้อมูลการสัมผัสและแสดงผลกราฟิก')">📱 หน้าจอสัมผัส</button>
-            <button class="nav-btn btn-prev" onclick="alert('แบตเตอรี่ (Battery): กักเก็บและจ่ายพลังงานไฟฟ้าให้อุปกรณ์')">🔋 แบตเตอรี่</button>
-            <button class="nav-btn btn-prev" onclick="alert('กล้องดิจิทัล (Camera): รับสัญญาณแสงแปลงเป็นภาพดิจิทัล')">📷 กล้องถ่ายรูป</button>
-            <button class="nav-btn btn-prev" onclick="alert('ชิปประมวลผล (CPU/SoC): คิดคำนวณและประมวลผลคำสั่ง')">⚙️ ชิปประมวลผล</button>
-          </div>
-        `;
-      } else if (unitNum === 2) {
-        title.textContent = "🔍 กิจกรรมหน่วยที่ 2: จัดกลุ่มยานพาหนะ (Pattern & Abstraction)";
-        content.innerHTML = `
-          <p style="margin-bottom:12px;">จัดกลุ่มยานพาหนะตามความเหมือนของจำนวนล้อ (Pattern):</p>
-          <ul style="line-height:2; font-size:16px;">
-            <li>🚲 <b>จักรยาน</b> ➔ กลุ่มยานพาหนะ 2 ล้อ ขับเคลื่อนด้วยแรงคน</li>
-            <li>🏍️ <b>มอเตอร์ไซค์</b> ➔ กลุ่มยานพาหนะ 2 ล้อ ขับเคลื่อนด้วยเครื่องยนต์</li>
-            <li>🚗 <b>รถยนต์</b> ➔ กลุ่มยานพาหนะ 4 ล้อ สำหรับบรรสารโดยสาร</li>
-            <li>🚁 <b>โดรน</b> ➔ กลุ่มยานพาหนะไร้คนขับ บินด้วยใบพัด</li>
-          </ul>
-        `;
-      } else if (unitNum === 3) {
-        title.textContent = "📊 กิจกรรมหน่วยที่ 3: ต่อผังงานระบบรดน้ำต้นไม้ (Algorithm)";
-        content.innerHTML = `
-          <p style="margin-bottom:10px;">เรียงลำดับขั้นตอนระบบรดน้ำต้นไม้อัตโนมัติ:</p>
-          <div style="background:#eaf3fa; padding:15px; border-radius:10px; font-family:monospace; font-size:16px;">
-            1. [เริ่มต้น] (Terminal)<br>
-            2. [อ่านค่าความชื้นในดิน H] (Data In)<br>
-            3. &lt;ความชื้น H &lt; 40 หรือไม่?&gt; (Decision)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;├─ ถ้าใช่: [สั่งเปิดวาล์วน้ำ] (Process)<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;└─ ถ้าไม่ใช่: [สั่งปิดวาล์วน้ำ] (Process)<br>
-            4. [สิ้นสุดการทำงาน] (Terminal)
-          </div>
-        `;
-      }
-      modal.style.display = 'flex';
-      playClick();
-    }
-
-    function closeActivity() {
-      document.getElementById('modal-activity').style.display = 'none';
-    }
 
     /* ================= FRAME 8: MINI-GAME MATCHING ================= */
     let selectedLeft = null;
