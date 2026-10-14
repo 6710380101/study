@@ -657,6 +657,11 @@
       cursor: default;
     }
 
+    .match-shape { display:inline-flex; align-items:center; justify-content:center; width:84px; flex-shrink:0; }
+    .match-shape .shape-svg { width:84px; height:42px; }
+    #col-right .match-card { justify-content:flex-start; gap:16px; padding:8px 18px; }
+    #col-right .match-card.matched .shape-svg { opacity:.75; }
+
     /* Modal / Popups */
     .modal-overlay {
       position: fixed;
@@ -1083,11 +1088,11 @@
             <div class="match-card" data-id="5" onclick="selectMatchLeft(this)">5. Flowline (ลูกศรแสดงทิศทางการทำงาน)</div>
           </div>
           <div id="col-right">
-            <div class="match-card" data-match="3" onclick="selectMatchRight(this)">สี่เหลี่ยมขนมเปียกปูน (Decision)</div>
-            <div class="match-card" data-match="1" onclick="selectMatchRight(this)">สี่เหลี่ยมผืนผ้าขอบมน / วงรี (Terminal)</div>
-            <div class="match-card" data-match="5" onclick="selectMatchRight(this)">ลูกศรบอกทิศทาง (Flowline)</div>
-            <div class="match-card" data-match="2" onclick="selectMatchRight(this)">สี่เหลี่ยมผืนผ้า (Process)</div>
-            <div class="match-card" data-match="4" onclick="selectMatchRight(this)">สี่เหลี่ยมด้านขนาน (Data In/Out)</div>
+            <div class="match-card" data-match="3" onclick="selectMatchRight(this)"><span class="match-shape"><svg viewBox="0 0 100 50" class="shape-svg"><polygon points="50,3 96,25 50,47 4,25" fill="#FFE08A" stroke="#1F4E79" stroke-width="3" stroke-linejoin="round"/></svg></span><span class="match-label">สี่เหลี่ยมขนมเปียกปูน</span></div>
+            <div class="match-card" data-match="1" onclick="selectMatchRight(this)"><span class="match-shape"><svg viewBox="0 0 100 50" class="shape-svg"><rect x="5" y="8" width="90" height="34" rx="17" fill="#CDE6F5" stroke="#1F4E79" stroke-width="3" stroke-linejoin="round"/></svg></span><span class="match-label">สี่เหลี่ยมผืนผ้าขอบมน / วงรี</span></div>
+            <div class="match-card" data-match="5" onclick="selectMatchRight(this)"><span class="match-shape"><svg viewBox="0 0 100 50" class="shape-svg"><line x1="8" y1="25" x2="72" y2="25" stroke="#1F4E79" stroke-width="4" stroke-linecap="round"/><polygon points="92,25 70,12 70,38" fill="#1F4E79"/></svg></span><span class="match-label">ลูกศรบอกทิศทาง</span></div>
+            <div class="match-card" data-match="2" onclick="selectMatchRight(this)"><span class="match-shape"><svg viewBox="0 0 100 50" class="shape-svg"><rect x="8" y="8" width="84" height="34" fill="#DFF3E3" stroke="#1F4E79" stroke-width="3" stroke-linejoin="round"/></svg></span><span class="match-label">สี่เหลี่ยมผืนผ้า</span></div>
+            <div class="match-card" data-match="4" onclick="selectMatchRight(this)"><span class="match-shape"><svg viewBox="0 0 100 50" class="shape-svg"><polygon points="22,8 96,8 78,42 4,42" fill="#FDE3C8" stroke="#1F4E79" stroke-width="3" stroke-linejoin="round"/></svg></span><span class="match-label">สี่เหลี่ยมด้านขนาน</span></div>
           </div>
         </div>
 
